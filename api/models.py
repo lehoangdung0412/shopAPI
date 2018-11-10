@@ -73,7 +73,7 @@ class Categories(models.Model):
 
 
 class Products(models.Model):
-    cat = models.ForeignKey(Categories, on_delete=models.CASCADE, blank=True, null=True)
+    cat = models.ForeignKey(Categories, related_name='products', on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     image = models.CharField(max_length=255)
