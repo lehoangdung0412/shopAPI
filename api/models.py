@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Customers(models.Model):
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='owner')
     forename = models.CharField(max_length=20)
     surname = models.CharField(max_length=20)
     add1 = models.CharField(max_length=100)

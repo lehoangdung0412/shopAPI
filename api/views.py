@@ -1,6 +1,8 @@
 from .serializers import *
 from . import models
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics
+from .permissions import IsOwner
+from django.shortcuts import Http404
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -58,3 +60,30 @@ class OrderItemViewSet(viewsets.ModelViewSet):
 class LoginViewSet(viewsets.ModelViewSet):
     queryset = models.Login.objects.all()
     serializer_class = LoginSerializer
+
+
+class CurrentUserViewSet(viewsets.GenericViewSet, generics.RetrieveUpdateAPIView):
+    queryset = models.Customers.objects
+    serializer_class = CustomerSerializer
+    permission_classes = (IsOwner,)
+
+    def get_view_name(self):
+        name = "Current User"
+        return name
+
+    def get_queryset(self):
+        # remove 'current-user/pk' url and its actions
+        if self.action in ('retrieve', 'update', 'partial_update'):
+            raise Http404
+        # get Customer object who is logging in
+        try:
+            return self.queryset.filter(owner=self.request.user).get()
+        except Exception:  # fix 'Anonymous User' error when log out and log in by admin
+            raise Http404
+
+    def list(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        return queryset
