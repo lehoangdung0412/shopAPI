@@ -87,3 +87,19 @@ class CurrentUserViewSet(viewsets.GenericViewSet, generics.RetrieveUpdateAPIView
     def get_object(self):
         queryset = self.get_queryset()
         return queryset
+
+
+class OrdersByCurrentUserViewSet(viewsets.GenericViewSet, generics.ListAPIView):
+    queryset = models.Orders.objects
+    serializer_class = OrderSerializer
+    permission_classes = (IsOwner, )
+
+    def get_view_name(self):
+        name = "Current User Order"
+        return name
+
+    def get_queryset(self):
+        try:
+            return self.queryset.filter(customer=self.request.user.owner)
+        except AttributeError:
+            raise Http404

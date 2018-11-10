@@ -11,6 +11,7 @@ router.register('orders', views.OrderViewSet)
 router.register('order-items', views.OrderItemViewSet)
 router.register('categories', views.CategoryViewSet)
 # router.register('login', views.LoginViewSet)
+router.register('current-user/orders', views.OrdersByCurrentUserViewSet)
 router.register('current-user', views.CurrentUserViewSet)
 
 
